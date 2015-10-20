@@ -10,13 +10,15 @@ public class StaticShader extends ShaderProgram {
 
 	private static final String VERTEX_FILE = "src/shaders/vertexShader.txt";
 	private static final String FRAGMENT_FILE = "src/shaders/fragmentShader.txt";
-	
+
 	private int locationTransformationMatrix;
 	private int locationProjectionMatrix;
 	private int locationViewMatrix;
 	private int locationLightPosition;
 	private int locationLightColor;
-	
+	private int locationShineDamper;
+	private int locationReflectivity;
+
 	public StaticShader() {
 		super(VERTEX_FILE, FRAGMENT_FILE);
 	}
@@ -30,28 +32,36 @@ public class StaticShader extends ShaderProgram {
 
 	@Override
 	protected void getAllUniformLocations() {
-		locationTransformationMatrix = super.getUniformLocation("transformationMatrix");
+		locationTransformationMatrix = super
+				.getUniformLocation("transformationMatrix");
 		locationProjectionMatrix = super.getUniformLocation("projectionMatrix");
 		locationViewMatrix = super.getUniformLocation("viewMatrix");
 		locationLightPosition = super.getUniformLocation("lightPosition");
 		locationLightColor = super.getUniformLocation("lightColor");
+		locationShineDamper = super.getUniformLocation("shineDamper");
+		locationReflectivity = super.getUniformLocation("reflectivity");
 	}
-	
-	public void loadTransformationMatrix (Matrix4f matrix) {
+
+	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(locationTransformationMatrix, matrix);
 	}
-	
-	public void loadProjectionMatrix (Matrix4f projection) {
+
+	public void loadProjectionMatrix(Matrix4f projection) {
 		super.loadMatrix(locationProjectionMatrix, projection);
 	}
-	
-	public void loadViewMatrix (Camera camera) {
+
+	public void loadViewMatrix(Camera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		super.loadMatrix(locationViewMatrix, viewMatrix);
 	}
-	
-	public void loadLight (Light light) {
+
+	public void loadLight(Light light) {
 		super.loadVerctor(locationLightPosition, light.getPosition());
 		super.loadVerctor(locationLightColor, light.getColor());
+	}
+
+	public void loadShineVariables(float damper, float reflectivity) {
+		super.loadFloat(locationShineDamper, damper);
+		super.loadFloat(locationReflectivity, reflectivity);
 	}
 }
