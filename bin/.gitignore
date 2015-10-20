@@ -1,7 +1,4 @@
 /shaders/
-/toolBox/
-/entities/
-/engine_tester/
-/render_engine/
 /textures/
-/terrains/
+/render_engine/
+/engine_tester/
