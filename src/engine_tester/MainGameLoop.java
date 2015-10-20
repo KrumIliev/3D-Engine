@@ -1,6 +1,12 @@
 package engine_tester;
 
+import models.RawModel;
 import models.TexturedModel;
+import render.engine.DisplayManager;
+import render.engine.Loader;
+import render.engine.MasterRenderer;
+import render.obj.ModelData;
+import render.obj.OBJFileLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,10 +15,6 @@ import java.util.Random;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.util.vector.Vector3f;
 
-import render_engine.DisplayManager;
-import render_engine.Loader;
-import render_engine.MasterRenderer;
-import render_engine.OBJLoader;
 import terrains.Terrain;
 import textures.ModelTexture;
 import entities.Camera;
@@ -33,14 +35,26 @@ public class MainGameLoop {
 		Terrain terrain = new Terrain(0, -1, loader, new ModelTexture(loader.loadTexture("grass")));
 		Terrain terrain2 = new Terrain(-1, -1, loader, new ModelTexture(loader.loadTexture("grass")));
 
-		TexturedModel tree = new TexturedModel(OBJLoader.loadObjModel("tree", loader),
-				new ModelTexture(loader.loadTexture("tree")));
-		TexturedModel grass = new TexturedModel(OBJLoader.loadObjModel("grassModel", loader),
-				new ModelTexture(loader.loadTexture("grassTexture")));
+		ModelData treeData = OBJFileLoader.loadOBJ("tree");
+		ModelData lowTreeData = OBJFileLoader.loadOBJ("lowPolyTree");
+		ModelData grassData = OBJFileLoader.loadOBJ("grassModel");
+		ModelData fernData = OBJFileLoader.loadOBJ("fern");
+
+		RawModel treeRaw = loader.loadToVAO(treeData.getVertices(), treeData.getTextureCoords(), treeData.getNormals(),
+				treeData.getIndices());
+		RawModel grassRaw = loader.loadToVAO(grassData.getVertices(), grassData.getTextureCoords(),
+				grassData.getNormals(), grassData.getIndices());
+		RawModel fernRaw = loader.loadToVAO(fernData.getVertices(), fernData.getTextureCoords(), fernData.getNormals(),
+				fernData.getIndices());
+		RawModel lowTreeRaw = loader.loadToVAO(lowTreeData.getVertices(), lowTreeData.getTextureCoords(), lowTreeData.getNormals(),
+				lowTreeData.getIndices());
+
+		TexturedModel tree = new TexturedModel(treeRaw, new ModelTexture(loader.loadTexture("tree")));
+		TexturedModel lowTree = new TexturedModel(lowTreeRaw, new ModelTexture(loader.loadTexture("lowPolyTree")));
+		TexturedModel grass = new TexturedModel(grassRaw, new ModelTexture(loader.loadTexture("grassTexture")));
 		grass.getTexture().setHasTransparency(true);
 		grass.getTexture().setUseFakeLighting(true);
-		TexturedModel fern = new TexturedModel(OBJLoader.loadObjModel("fern", loader),
-				new ModelTexture(loader.loadTexture("fern")));
+		TexturedModel fern = new TexturedModel(fernRaw, new ModelTexture(loader.loadTexture("fern")));
 		fern.getTexture().setHasTransparency(true);
 
 		List<Entity> entities = new ArrayList<Entity>();
@@ -48,6 +62,8 @@ public class MainGameLoop {
 		for (int i = 0; i < 500; i++) {
 			entities.add(new Entity(tree, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0,
 					0, 0, 3));
+			entities.add(new Entity(lowTree, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0,
+					0, 0, 0.3f));
 			entities.add(new Entity(grass, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600),
 					0, 0, 0, 1));
 			entities.add(new Entity(fern, new Vector3f(random.nextFloat() * 800 - 400, 0, random.nextFloat() * -600), 0,

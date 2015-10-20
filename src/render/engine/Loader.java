@@ -1,4 +1,4 @@
-package render_engine;
+package render.engine;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
